@@ -1,6 +1,6 @@
 package com.fitfoxconn.npi.dmp.api.aspect;
 
-import com.fitfoxconn.npi.dmp.api.common.AccessDeniedException;
+import com.fitfoxconn.npi.dmp.api.common.exception.AccessDeniedException;
 import com.fitfoxconn.npi.dmp.api.repository.api.AccessLogDao;
 import com.fitfoxconn.npi.dmp.api.entity.api.AccessLogEntity;
 import com.fitfoxconn.npi.dmp.api.util.HttpServletRequestUtil;
@@ -47,7 +47,8 @@ public class AccessLogAspect {
   public void before() {
     HttpServletRequest request = HttpServletRequestUtil.getRequest();
     String requestUrl = request.getRequestURI().toString();
-    String ip = request.getRemoteAddr();
+    //String ip = request.getRemoteAddr();
+    String ip = request.getHeader("X-Forwarded-For");
     String jwtToken = request.getHeader("Authorization");
     String username = HttpServletRequestUtil.getUsername(request, jwtDecoder);
 

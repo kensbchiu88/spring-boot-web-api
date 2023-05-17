@@ -4,6 +4,9 @@ import com.fitfoxconn.npi.dmp.api.entity.api.RbacResourceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+/**
+ * RbacResource dao
+ */
 public interface RbacResourceDao extends JpaRepository<RbacResourceEntity, Integer> {
 
   @Query(value = "select count(1)"

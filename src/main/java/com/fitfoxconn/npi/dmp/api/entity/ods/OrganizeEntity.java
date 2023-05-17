@@ -2,7 +2,6 @@ package com.fitfoxconn.npi.dmp.api.entity.ods;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -55,7 +54,7 @@ public class OrganizeEntity {
     @Column(name = "\"Updateperson\"")
     private String updatePerson;
     @Column(name = "\"Updatedatetime\"")
-    private Timestamp udateDateTime;
+    private Timestamp updateDateTime;
     @Column(name = "\"Qualityowner\"")
     private String qualityOwner;
     @Column(name = "\"QualityownerEmail\"")

@@ -1,13 +1,10 @@
 package com.fitfoxconn.npi.dmp.api.aspect;
 
-import com.fitfoxconn.npi.dmp.api.common.AccessDeniedException;
+import com.fitfoxconn.npi.dmp.api.common.exception.AccessDeniedException;
 import com.fitfoxconn.npi.dmp.api.service.RbacAuthorizationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -18,10 +15,6 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Aspect
