@@ -1,6 +1,10 @@
 package com.fitfoxconn.npi.dmp.api.controller;
 
 import com.fitfoxconn.npi.dmp.api.model.GetTokenRs;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Base64Utils;
@@ -33,43 +37,20 @@ public class TokenController {
   @Value("${oauth2.client.authorize-endpoint:}")
   private String authorizeEndPoint;
 
-//  @Value("${oauth2.client.scope:}")
-//  private String oauth2ClientScope;
-
-  /*
-  @GetMapping("/getToken")
-  public void getAuthorizationCode() {
-    WebClient client = WebClient.create();
-
-    String loginPage = String.format("%s?response_type=code&client_id=%s&scope=%s&redirect_uri=%s", authorizeEndPoint, oauth2ClientId, oauth2ClientScope,oauth2ClientRedirectUri);
-
-    String authorizeUrl = client.get().uri(loginPage)
-        .retrieve()
-        .bodyToMono(String.class)
-        .block();
-    System.out.println("----authorizeUrl----" + authorizeUrl);
-  }
-*/
+  @Value("${oauth2.client.scope:}")
+  private String oauth2ClientScope;
 
   @GetMapping("/token")
   @ResponseBody
+  @Operation(summary = "取得JWT Token")
+  @Parameter(name = "code", description = "OAuth2.0 Authorization Code")
   public GetTokenRs getTokenByCode(@RequestParam("code") String code) {
-    System.out.println("----code----" + code);
-    System.out.println("----oauth2ClientId----" + oauth2ClientId);
-    System.out.println("----oauth2ClientSecret----" + oauth2ClientSecret);
-    System.out.println("----oauth2ClientRedirectUri----" + oauth2ClientRedirectUri);
-    System.out.println("----tokenEndPoint----" + tokenEndPoint);
-
     String authString = this.oauth2ClientId + ":" + this.oauth2ClientSecret;
-//    String authString = this.oauth2ClientId + ":" + new BCryptPasswordEncoder().encode(this.oauth2ClientSecret);
-
 
     WebClient client = WebClient.create();
     String encodedClientData =
-//                Base64Utils.encodeToString("dmp-api:1111".getBytes());
         Base64Utils.encodeToString(authString.getBytes());
     WebClient.ResponseSpec responseSpec = client.post()
-//        .uri("http://127.0.0.1:8000/oauth2/token")
         .uri(this.tokenEndPoint)
         .header("Authorization", "Basic " + encodedClientData)
         .body(BodyInserters.fromFormData("grant_type", "authorization_code")
@@ -80,15 +61,5 @@ public class TokenController {
     System.out.println("----body----" + responseBody);
     return responseBody;
   }
-
-    /*
-    @GetMapping("/login")
-    public void requestToken() {
-        WebClient client = WebClient.create();
-        client.get()
-                .uri("http://127.0.0.1:8000/oauth2/authorize?response_type=code&client_id=articles-client&scope=articles.read&redirect_uri=http://127.0.0.1:8001/gettoken")
-                .retrieve().bodyToMono(String.class);
-    }
-    */
 
 }

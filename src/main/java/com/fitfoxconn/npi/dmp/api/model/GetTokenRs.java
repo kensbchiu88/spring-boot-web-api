@@ -3,6 +3,9 @@ package com.fitfoxconn.npi.dmp.api.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+/**
+ * Response of /token api
+ */
 @Data
 public class GetTokenRs {
     @JsonProperty("access_token")
