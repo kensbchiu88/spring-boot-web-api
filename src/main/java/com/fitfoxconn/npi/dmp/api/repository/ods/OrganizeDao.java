@@ -41,9 +41,8 @@ public interface OrganizeDao extends JpaRepository<OrganizeEntity, Integer> {
    * @param parentCode 上層組織的組織碼
    * @return OrganizationEntity
    */
-  @Query(value = "select o2 from OrganizeEntity o2 "
-      + "right join OrganizeEntity o1 on o2.fatherId = o1.id "
-      + "where o1.notePath = ?1")
+  @Query(value = "select o2 from OrganizeEntity o1, OrganizeEntity o2 "
+      + "where o1.notePath = ?1 and o2.fatherId = o1.id")
   public List<OrganizeEntity> getByParentCode(String parentCode);
 
 
