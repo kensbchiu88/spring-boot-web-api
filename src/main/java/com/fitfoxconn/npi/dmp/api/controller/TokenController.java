@@ -42,7 +42,7 @@ public class TokenController {
 
   @GetMapping("/token")
   @ResponseBody
-  @Operation(summary = "透過OAuth2.0 Authorization Code，取得JWT Token")
+  @Operation(summary = "透過OAuth2.0 Authorization Code，取得JWT Token ")
   @Parameter(name = "code", description = "OAuth2.0 Authorization Code")
   public GetTokenRs getTokenByCode(@RequestParam("code") String code) {
     String authString = this.oauth2ClientId + ":" + this.oauth2ClientSecret;
