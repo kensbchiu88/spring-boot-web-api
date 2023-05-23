@@ -32,10 +32,10 @@ public class OrganizationControllerV1 {
   @Autowired
   private OrganizationService organizationService;
 
-  @GetMapping(value = "/children-organizations")
-  @Operation(summary = "取得下層組織資訊", security = @SecurityRequirement(name = "bearerAuth"))
+  @GetMapping(value = "/child-organizations")
+  @Operation(summary = "取得下層組織資訊(不含設備)", security = @SecurityRequirement(name = "bearerAuth"))
   @Parameter(name = "parentCode", description = "上層組織碼", schema = @Schema(example = "0602"))
-  public List<GetOrganizationCodeNameRs> getChildrenOrganization(@RequestParam String parentCode) {
+  public List<GetOrganizationCodeNameRs> getChildOrganization(@RequestParam String parentCode) {
     List<GetOrganizationCodeNameOutput> serviceOutput = this.organizationService.getOrganization(
         parentCode);
 
@@ -49,10 +49,10 @@ public class OrganizationControllerV1 {
     return response;
   }
 
-  @GetMapping(value = "/active-children-organizations")
-  @Operation(summary = "取得Active的下層組織資訊", security = @SecurityRequirement(name = "bearerAuth"))
+  @GetMapping(value = "/active-child-organizations")
+  @Operation(summary = "取得Active的下層組織資訊(不含設備)", security = @SecurityRequirement(name = "bearerAuth"))
   @Parameter(name = "parentCode", description = "上層組織碼", schema = @Schema(example = "0602"))
-  public List<GetOrganizationCodeNameRs> getActiveChildrenOrganization(
+  public List<GetOrganizationCodeNameRs> getActiveChildOrganization(
       @RequestParam String parentCode) {
     List<GetOrganizationCodeNameOutput> serviceOutput = this.organizationService.getActiveOrganization(
         parentCode);

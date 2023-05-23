@@ -31,7 +31,7 @@ public class OrganizationService {
   private EquipmentDao equipmentDao;
 
   /**
-   * 取得下層組織資訊
+   * 取得下層組織資訊(不含設備)
    */
   public List<GetOrganizationCodeNameOutput> getOrganization(String parentCode) {
 
@@ -46,7 +46,7 @@ public class OrganizationService {
   }
 
   /**
-   * 取得下層Active的組織資訊
+   * 取得下層Active的組織資訊(不含設備)
    */
   public List<GetOrganizationCodeNameOutput> getActiveOrganization(String parentCode) {
     OrganizeEntity organizeEntity = this.organizeDao.findByNotePath(parentCode);
