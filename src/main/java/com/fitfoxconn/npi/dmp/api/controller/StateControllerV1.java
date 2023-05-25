@@ -1,7 +1,7 @@
 package com.fitfoxconn.npi.dmp.api.controller;
 
 import com.fitfoxconn.npi.dmp.api.common.constant.ShiftEnum;
-import com.fitfoxconn.npi.dmp.api.common.exception.ValidateException;
+import com.fitfoxconn.npi.dmp.api.common.exception.ValidationException;
 import com.fitfoxconn.npi.dmp.api.model.GetCurrentStateRs;
 import com.fitfoxconn.npi.dmp.api.model.GetCurrentStateRs.EquipmentState;
 import com.fitfoxconn.npi.dmp.api.model.GetStatesRs;
@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 設備狀態相關API controller
  */
+@Tag(name = "StateControllerV1", description = "設備狀態API")
 @RestController
 @RequestMapping("/api/v1/equipment")
 public class StateControllerV1 {
@@ -47,7 +49,7 @@ public class StateControllerV1 {
   public GetCurrentStateRs getCurrentState(
       @RequestParam int[] equipmentIds,
       @RequestParam String queryDate,
-      @RequestParam int shift) throws ValidateException {
+      @RequestParam int shift) throws ValidationException {
 
     GetCurrentStateOutput serviceOutput = this.equipmentStateService.getCurrentState(
         Arrays.stream(equipmentIds).boxed().collect(Collectors.toList()),
@@ -81,7 +83,7 @@ public class StateControllerV1 {
   public GetStatesRs getStates(
       @RequestParam int[] equipmentIds,
       @RequestParam String queryDate,
-      @RequestParam int shift) throws ValidateException {
+      @RequestParam int shift) throws ValidationException {
 
     GetStatesOutput serviceOutput = this.equipmentStateService.getStates(
         Arrays.stream(equipmentIds).boxed().collect(Collectors.toList()),

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 組織相關API controller
  */
-
+@Tag(name = "OrganizationControllerV1", description = "SCADA組織API")
 @RestController
 @RequestMapping("/api/v1/organization")
 public class OrganizationControllerV1 {
