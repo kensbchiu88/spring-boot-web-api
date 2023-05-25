@@ -1,7 +1,7 @@
 package com.fitfoxconn.npi.dmp.api.controller;
 
 import com.fitfoxconn.npi.dmp.api.common.constant.ShiftEnum;
-import com.fitfoxconn.npi.dmp.api.common.exception.ValidateException;
+import com.fitfoxconn.npi.dmp.api.common.exception.ValidationException;
 import com.fitfoxconn.npi.dmp.api.model.GetMultiDatedPerformanceKpisRs;
 import com.fitfoxconn.npi.dmp.api.model.GetMultiDatedPerformanceKpisRs.Kpis;
 import com.fitfoxconn.npi.dmp.api.model.GetSingleDatedPerformanceKpisRs;
@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 設備效率相關kpi controller
  */
+@Tag(name = "PerformanceKpiControllerV1", description = "設備效率指標API")
 @RestController
 @RequestMapping("/api/v1/equipment")
 public class PerformanceKpiControllerV1 {
@@ -47,7 +49,7 @@ public class PerformanceKpiControllerV1 {
       @RequestParam int equipmentId,
       @RequestParam String startDate,
       @RequestParam String endDate,
-      @RequestParam int shift) throws ValidateException {
+      @RequestParam int shift) throws ValidationException {
 
     ShiftEnum shiftEnum = ShiftEnum.getByShiftCode(shift);
     GetMultiDatedPerformanceKpisOutput serviceOutput = this.performanceKpisService.getMultiDatedPerformanceKpis(
@@ -84,7 +86,7 @@ public class PerformanceKpiControllerV1 {
       @RequestParam int[] equipmentIds,
       @RequestParam(value = "queryDate", required = true) String queryDate,
       @RequestParam int shift
-  ) throws ValidateException {
+  ) throws ValidationException {
 
     GetSingleDatedPerformanceKpisOutput serviceOutput = this.performanceKpisService.getSingleDatedPerformanceKpis(
         Arrays.stream(equipmentIds).boxed().collect(Collectors.toList()),

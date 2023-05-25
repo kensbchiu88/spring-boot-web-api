@@ -1,7 +1,7 @@
 package com.fitfoxconn.npi.dmp.api.controller;
 
 import com.fitfoxconn.npi.dmp.api.common.constant.ShiftEnum;
-import com.fitfoxconn.npi.dmp.api.common.exception.ValidateException;
+import com.fitfoxconn.npi.dmp.api.common.exception.ValidationException;
 import com.fitfoxconn.npi.dmp.api.model.GetMultiDatedErrorKpisRs;
 import com.fitfoxconn.npi.dmp.api.model.GetMultiDatedErrorKpisRs.Kpis;
 import com.fitfoxconn.npi.dmp.api.model.GetSingleDatedErrorKpisRs;
@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 設備錯誤相關kpi controller
  */
-
+@Tag(name = "ErrorKpiControllerV1", description = "設備錯誤指標API")
 @RestController
 @RequestMapping("/api/v1/equipment")
 public class ErrorKpiControllerV1 {
@@ -48,7 +49,7 @@ public class ErrorKpiControllerV1 {
       @RequestParam int equipmentId,
       @RequestParam String startDate,
       @RequestParam String endDate,
-      @RequestParam int shift) throws ValidateException {
+      @RequestParam int shift) throws ValidationException {
     ShiftEnum shiftEnum = ShiftEnum.getByShiftCode(shift);
     GetMultiDatedErrorKpisOutput serviceOutput = this.errorKpisService.getMultiDatedErrorKpis(
         equipmentId, LocalDate.parse(startDate), LocalDate.parse(endDate), shiftEnum);
@@ -83,7 +84,7 @@ public class ErrorKpiControllerV1 {
   public GetSingleDatedErrorKpisRs getSingleDatedErrorKpis(
       @RequestParam int[] equipmentIds,
       @RequestParam String queryDate,
-      @RequestParam int shift) throws ValidateException {
+      @RequestParam int shift) throws ValidationException {
 
     GetSingleDatedErrorKpisOutput serviceOutput = this.errorKpisService.getSingleDatedErrorKpis(
         Arrays.stream(equipmentIds).boxed().collect(Collectors.toList()),
