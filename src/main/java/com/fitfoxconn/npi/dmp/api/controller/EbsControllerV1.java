@@ -2,8 +2,12 @@ package com.fitfoxconn.npi.dmp.api.controller;
 
 import com.fitfoxconn.npi.dmp.api.model.GetOpenWorkOrderRs;
 import com.fitfoxconn.npi.dmp.api.model.GetOpenWorkOrderRs.OpenWorkOrder;
+import com.fitfoxconn.npi.dmp.api.model.GetProductTransactionsRs;
+import com.fitfoxconn.npi.dmp.api.model.GetProductTransactionsRs.ProductTransaction;
 import com.fitfoxconn.npi.dmp.api.service.OpenWorkOrderService;
 import com.fitfoxconn.npi.dmp.api.service.OpenWorkOrderService.GetOpenWorkOrderByDateOutput;
+import com.fitfoxconn.npi.dmp.api.service.ProductTransactionService;
+import com.fitfoxconn.npi.dmp.api.service.ProductTransactionService.getProductTransactionOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,9 +34,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class EbsControllerV1 {
 
   @Autowired
-  OpenWorkOrderService openWorkOrderService;
+  private OpenWorkOrderService openWorkOrderService;
 
-  @GetMapping(value = "/open-work-order")
+  @Autowired
+  private ProductTransactionService productTransactionService;
+
+  @GetMapping(value = "/open-work-orders")
   @Operation(summary = "抓取實際消耗率最高的未結工單資訊", security = @SecurityRequirement(name = "bearerAuth"))
   @Parameter(name = "startDate", description = "查詢日期起", schema = @Schema(example = "2023-05-11"))
   @Parameter(name = "endDate", description = "查詢日期訖", schema = @Schema(example = "2023-05-12"))
@@ -41,27 +48,71 @@ public class EbsControllerV1 {
     List<GetOpenWorkOrderByDateOutput> serviceOutput = this.openWorkOrderService.getOpenWorkOrderByDate(
         LocalDate.parse(startDate), LocalDate.parse(endDate));
 
-    //轉換成response格式
-    Map<LocalDate, List<OpenWorkOrder>> responseTempMap = new TreeMap<>();
-    serviceOutput.forEach(i -> {
+    return transformOpenWorkOrders(serviceOutput);
+  }
+
+  @GetMapping(value = "/product-transactions")
+  @Operation(summary = "抓取產品庫存明細", security = @SecurityRequirement(name = "bearerAuth"))
+  @Parameter(name = "partNumber", description = "料號", schema = @Schema(example = "QT4013Y-D0332-7H"))
+  @Parameter(name = "startDate", description = "查詢日期起", schema = @Schema(example = "2023-05-11"))
+  @Parameter(name = "endDate", description = "查詢日期訖", schema = @Schema(example = "2023-05-12"))
+  public List<GetProductTransactionsRs> getProductTransaction(@RequestParam String partNumber,
+      @RequestParam String startDate,
+      @RequestParam String endDate) {
+    List<getProductTransactionOutput> serviceOutput = this.productTransactionService.getProductTransaction(
+        partNumber, LocalDate.parse(startDate), LocalDate.parse(endDate));
+
+    return transformProductTransactions(serviceOutput);
+  }
+
+  /** 將service output的格式轉換成 response的格式 */
+  private List<GetOpenWorkOrderRs> transformOpenWorkOrders(List<GetOpenWorkOrderByDateOutput> input) {
+    Map<LocalDate, List<OpenWorkOrder>> tempMap = new TreeMap<>();
+    input.forEach(i -> {
       List<OpenWorkOrder> tempList;
-      if(responseTempMap.containsKey(i.getShowDate())){
-        tempList = responseTempMap.get(i.getShowDate());
+      if (tempMap.containsKey(i.getShowDate())) {
+        tempList = tempMap.get(i.getShowDate());
       } else {
         tempList = new ArrayList<>();
       }
       OpenWorkOrder tempOpenWorkOrder = new OpenWorkOrder();
       BeanUtils.copyProperties(i, tempOpenWorkOrder);
       tempList.add(tempOpenWorkOrder);
-      responseTempMap.put(i.getShowDate(), tempList);
+      tempMap.put(i.getShowDate(), tempList);
     });
 
-    List<GetOpenWorkOrderRs> response = new ArrayList<>();
+    List<GetOpenWorkOrderRs> result = new ArrayList<>();
 
-    for (LocalDate key : responseTempMap.keySet()) {
-      response.add(GetOpenWorkOrderRs.builder().showDate(key).data(responseTempMap.get(key)).build());
+    for (LocalDate key : tempMap.keySet()) {
+      result.add(
+          GetOpenWorkOrderRs.builder().showDate(key).data(tempMap.get(key)).build());
     }
 
-    return response;
+    return result;
+  }
+
+  /** 將service output的格式轉換成 response的格式 */
+  private List<GetProductTransactionsRs> transformProductTransactions(List<getProductTransactionOutput> input) {
+    List<GetProductTransactionsRs> result = new ArrayList<>();
+    Map<LocalDate, List<ProductTransaction>> tempMap = new TreeMap<>();
+    input.forEach(i -> {
+      List<ProductTransaction> tempList;
+      if (tempMap.containsKey(i.getSearchDate().toLocalDate())) {
+        tempList = tempMap.get(i.getSearchDate().toLocalDate());
+      } else {
+        tempList = new ArrayList<>();
+      }
+      ProductTransaction tempProductTransaction = new ProductTransaction();
+      BeanUtils.copyProperties(i, tempProductTransaction);
+      tempList.add(tempProductTransaction);
+      tempMap.put(i.getSearchDate().toLocalDate(), tempList);
+    });
+
+    for (LocalDate key : tempMap.keySet()) {
+      result.add(
+          GetProductTransactionsRs.builder().searchDate(key).data(tempMap.get(key)).build());
+    }
+
+    return result;
   }
 }
