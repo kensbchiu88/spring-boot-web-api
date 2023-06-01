@@ -34,23 +34,19 @@ dependencies {
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
-	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
-	//implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
-	// for spring boot 3
+	// swagger for spring boot 3
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	runtimeOnly 'org.postgresql:postgresql'
 
-	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-tomcat
-//	implementation 'org.springframework.boot:spring-boot-starter-tomcat:3.0.2'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
-	// https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
-//	compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-
+	//open telemetry
+	implementation group: 'io.opentelemetry.instrumentation', name: 'opentelemetry-spring-boot-starter', version: '1.26.0-alpha'
+	runtimeOnly group: 'io.opentelemetry.instrumentation', name: 'opentelemetry-logback-mdc-1.0', version: '1.26.0-alpha'
 }
 
 tasks.named('test') {
