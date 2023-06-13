@@ -4,9 +4,11 @@ import com.fitfoxconn.npi.dmp.api.common.constant.ShiftEnum;
 import com.fitfoxconn.npi.dmp.api.common.exception.ValidationException;
 import com.fitfoxconn.npi.dmp.api.model.GetMultiDatedPerformanceKpisRs;
 import com.fitfoxconn.npi.dmp.api.model.GetMultiDatedPerformanceKpisRs.Kpis;
+import com.fitfoxconn.npi.dmp.api.model.GetSingleDatedClassedPerformanceKpisRs;
 import com.fitfoxconn.npi.dmp.api.model.GetSingleDatedPerformanceKpisRs;
 import com.fitfoxconn.npi.dmp.api.service.PerformanceKpisService;
 import com.fitfoxconn.npi.dmp.api.service.PerformanceKpisService.GetMultiDatedPerformanceKpisOutput;
+import com.fitfoxconn.npi.dmp.api.service.PerformanceKpisService.GetSingleDatedClassedPerformanceKpisOutput;
 import com.fitfoxconn.npi.dmp.api.service.PerformanceKpisService.GetSingleDatedPerformanceKpisOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -108,4 +111,44 @@ public class PerformanceKpiControllerV1 {
     return response;
 
   }
+
+  /**
+   * 抓取某一天，依課別區分，多個設備的效率相關KPI
+   */
+  @GetMapping(value = "/single-dated-classed-performance-kpis")
+  @Operation(summary = "抓取某一天，依課別區分，多個設備的效率相關KPI", security = @SecurityRequirement(name = "bearerAuth"))
+  @Parameter(name = "equipmentIds", description = "設備代碼", schema = @Schema(example = "4660, 4661"))
+  @Parameter(name = "queryDate", description = "查詢日期", schema = @Schema(example = "2023-05-12"))
+  @Parameter(name = "classEndTime", description = "課別結束時間", schema = @Schema(example = "10:00, 12:00, 15:00:00, 17:30:00"))
+  public List<GetSingleDatedClassedPerformanceKpisRs> getSingleDatedClassedPerformanceKpis(
+      @RequestParam int[] equipmentIds,
+      @RequestParam String queryDate,
+      @RequestParam String[] classEndTime) {
+
+    List<GetSingleDatedClassedPerformanceKpisOutput> serviceOutputs = this.performanceKpisService.getSingleDatedClassedPerformanceKpis(
+        Arrays.stream(equipmentIds).boxed().collect(Collectors.toList()),
+        LocalDate.parse(queryDate),
+        Arrays.stream(classEndTime).map(LocalTime::parse).collect(Collectors.toList()));
+
+    List<GetSingleDatedClassedPerformanceKpisRs> response = new ArrayList<>();
+
+    serviceOutputs.forEach(i -> {
+      List<GetSingleDatedClassedPerformanceKpisRs.Kpis> responseKpis = new ArrayList<>();
+      i.getKpis().forEach(j -> {
+        GetSingleDatedClassedPerformanceKpisRs.Kpis kpi = new GetSingleDatedClassedPerformanceKpisRs.Kpis();
+        BeanUtils.copyProperties(j, kpi);
+        responseKpis.add(kpi);
+      });
+
+      GetSingleDatedClassedPerformanceKpisRs responseElement = GetSingleDatedClassedPerformanceKpisRs.builder()
+          .date(i.getDate())
+          .time(i.getTime())
+          .kpis(responseKpis)
+          .build();
+      response.add(responseElement);
+    });
+
+    return response;
+  }
+
 }
