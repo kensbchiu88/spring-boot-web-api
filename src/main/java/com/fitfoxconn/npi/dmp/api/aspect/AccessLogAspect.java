@@ -47,8 +47,7 @@ public class AccessLogAspect {
   public void before() {
     HttpServletRequest request = HttpServletRequestUtil.getRequest();
     String requestUrl = request.getRequestURI().toString();
-    //String ip = request.getRemoteAddr();
-    String ip = request.getHeader("X-Forwarded-For");
+    String ip = request.getRemoteAddr();
     String jwtToken = request.getHeader("Authorization");
     String username = HttpServletRequestUtil.getUsername(request, jwtDecoder);
 
